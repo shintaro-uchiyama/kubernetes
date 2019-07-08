@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ucwork.local
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+  - host: nginx.ucwork.local
+    http:
+      paths:
+      - backend:
+          serviceName: nginx
+          servicePort: 443
+  - host: go.ucwork.local
+    http:
+      paths:
+      - backend:
+          serviceName: go
+          servicePort: 443

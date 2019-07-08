@@ -1,0 +1,13 @@
+apiVersion: skaffold/v1beta7
+kind: Config
+build:
+  artifacts:
+  - image: shintaro0123/nginx
+    context: ./docker/nginx/
+  - image: shintaro0123/golang
+    context: ./docker/go/
+deploy:
+  kubectl:
+    manifests:
+      - nginx-deployment.yaml
+      - go-deployment.yaml

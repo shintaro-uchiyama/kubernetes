@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+    - port: 443
+  selector:
+    app: nginx
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: frontend
+    spec:
+      containers:
+      - image: shintaro0123/nginx:release-n-1.0.5
+        name: nginx
+        resources:
+          limits:
+            memory: 256Mi
+          requests:
+            memory: 128Mi
+        ports:
+        - containerPort: 443
+          name: nginx
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+        - name: tls-cert
+          mountPath: /etc/nginx/tls
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+      - name: tls-cert
+        secret:
+          secretName: tls-secret
